@@ -11,13 +11,14 @@ namespace Cards
     {
         public enum format
         {
-            Italian
+            French52,
+
         }
         private List<Card> cards;
 
         public List<Card> Cards { get => cards; set => cards = value; }
 
-        public Deck(format DeckFormat = format.Italian, int Jokers = 0)
+        public Deck(format DeckFormat = format.French52, int Jokers = 0)
         {
             Cards = new List<Card>();
             List<Card.suit> DeckSuits = null;
@@ -25,7 +26,7 @@ namespace Cards
 
             switch (DeckFormat)
             {
-                case format.Italian:
+                case format.French52:
                     DeckSuits = new List<Card.suit> { Card.suit.clubs, Card.suit.hearts, Card.suit.spades, Card.suit.diamonds };
                     DeckRanks = new List<Card.rank> { Card.rank.ace, Card.rank.two, Card.rank.three, Card.rank.four, Card.rank.five, Card.rank.six, Card.rank.seven, Card.rank.eight, Card.rank.nine, Card.rank.ten, Card.rank.jack, Card.rank.queen, Card.rank.king };
                     break;

@@ -11,10 +11,22 @@ namespace Cards
         }
         public enum suit
         {
+            //French Suited
             hearts,
             spades,
             diamonds,
-            clubs
+            clubs,
+            //German suited
+            bells,
+            acorns,
+            leaves,
+            //Swiss suited
+            shields,
+            roses,
+            //Spanish suited
+            coins,
+            cups
+
         }
         public enum color
         {
@@ -43,7 +55,12 @@ namespace Cards
         public rank CardRank { get; }
         public suit? CardSuit { get; }
 
-        public string SVG { get; }
+        public string SVG { 
+            get {
+                //TODO: Complete 
+                return null;
+            } 
+        }
         public bool IsFaceCard { get
             {
                 if (CardRank.GetType() == typeof(int) || CardRank == rank.joker)

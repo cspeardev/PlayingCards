@@ -1,48 +1,58 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace CardsLibrary;
 
-namespace Cards
+public partial class Deck
 {
-    public class Deck
+    private static Random rnd = new();
+    private List<Card> cards;
+
+    public IList<Card> Cards { get => cards; }
+
+    public Deck(Format DeckFormat = Format.French52, int Jokers = 0)
     {
-        public enum format
+        cards = new List<Card>();
+        List<Card.Suit> DeckSuits = new();
+        List<Card.Rank> DeckRanks = new();
+
+        int jokerCount = 0;
+
+        switch (DeckFormat)
         {
-            French52,
+            case Format.French52:
+                DeckSuits = new List<Card.Suit> { Card.Suit.clubs, Card.Suit.hearts, Card.Suit.spades, Card.Suit.diamonds };
+                DeckRanks = new List<Card.Rank> { Card.Rank.ace, Card.Rank.two, Card.Rank.three, Card.Rank.four, Card.Rank.five, Card.Rank.six, Card.Rank.seven, Card.Rank.eight, Card.Rank.nine, Card.Rank.ten, Card.Rank.jack, Card.Rank.queen, Card.Rank.king };
+                break;
 
         }
-        private List<Card> cards;
 
-        public List<Card> Cards { get => cards; set => cards = value; }
 
-        public Deck(format DeckFormat = format.French52, int Jokers = 0)
+        foreach (Card.Suit s in DeckSuits)
         {
-            Cards = new List<Card>();
-            List<Card.suit> DeckSuits = null;
-            List<Card.rank> DeckRanks = null;
-
-            switch (DeckFormat)
+            foreach (Card.Rank r in DeckRanks)
             {
-                case format.French52:
-                    DeckSuits = new List<Card.suit> { Card.suit.clubs, Card.suit.hearts, Card.suit.spades, Card.suit.diamonds };
-                    DeckRanks = new List<Card.rank> { Card.rank.ace, Card.rank.two, Card.rank.three, Card.rank.four, Card.rank.five, Card.rank.six, Card.rank.seven, Card.rank.eight, Card.rank.nine, Card.rank.ten, Card.rank.jack, Card.rank.queen, Card.rank.king };
-                    break;
-
+                Cards.Add(new Card(s, r));
             }
-
-
-            foreach (Card.suit s in DeckSuits)
-            {
-                foreach (Card.rank r in DeckRanks)
-                {
-                    Cards.Add(new Card(s, r));
-                }
-            }
-
-            for (int i = 0;i < Jokers; i++) cards.Add(new Card(null, Card.rank.joker));
         }
+
+        for (int i = 0; i < jokerCount; i++)
+        {
+            Cards.Add(new Card(null, Card.Rank.joker));
+        }
+
+
+        for (int i = 0; i < Jokers; i++) cards.Add(new Card(null, Card.Rank.joker));
+    }
+
+    /// <summary>
+    /// Shuffles all cards in the deck.
+    /// If the shuffle results in the cards being in the same order, will shuffle again.
+    /// </summary>
+    public void Shuffle()
+    {
+        var originalSequence = cards;
+        do
+        {
+            cards = cards.OrderBy(c => rnd.Next()).ToList();
+        } while (cards.SequenceEqual(originalSequence));
+
     }
 }

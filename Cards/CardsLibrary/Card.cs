@@ -1,90 +1,90 @@
 ﻿using System;
+using System.Xml;
 
-namespace Cards
+namespace CardsLibrary;
+
+public partial class Card : IEquatable<Card>
 {
-    public class Card
+    private string cardSVG;
+    public Card(Suit? Suit, Rank Rank)
     {
-        public Card(suit? Suit, rank Rank)
-        {
-            CardSuit = Suit;
-            CardRank = Rank;
-        }
-        public enum suit
-        {
-            //French Suited
-            hearts,
-            spades,
-            diamonds,
-            clubs,
-            //German suited
-            bells,
-            acorns,
-            leaves,
-            //Swiss suited
-            shields,
-            roses,
-            //Spanish suited
-            coins,
-            cups
+        CardSuit = Suit;
+        CardRank = Rank;
+        cardSVG = GenerateSVG();
+    }
+    public Color CardColor { get; }
+    public Rank CardRank { get; }
+    /// <summary>
+    /// CardSuit will be null if rank is Joker
+    /// </summary>
+    public Suit? CardSuit { get; }
 
-        }
-        public enum color
-        {
-            red,
-            black,
-            blue
-        }
-        public enum rank
-        {
-            ace = 'A',
-            two = 2,
-            three = 3,
-            four = 4,
-            five = 5,
-            six = 6,
-            seven = 7,
-            eight = 8,
-            nine = 9,
-            ten = 10,
-            jack = 'J',
-            queen = 'Q',
-            king = 'K',
-            joker
-        }
-        public color CardColor { get; }
-        public rank CardRank { get; }
-        public suit? CardSuit { get; }
+    public string SVG
+    {
+        get => cardSVG;
+        private set => cardSVG = value;
+    }
 
-        public string SVG { 
-            get {
-                //TODO: Complete 
-                return null;
-            } 
-        }
-        public bool IsFaceCard { get
-            {
-                if (CardRank.GetType() == typeof(int) || CardRank == rank.joker)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            } 
-        }
-        public override string ToString()
+    public bool IsFaceCard
+    {
+        get
         {
-            if(CardRank == Card.rank.joker)
+            if (CardRank.GetType() == typeof(int) || CardRank == Rank.joker)
             {
-                return "Joker";
+                return false;
             }
             else
             {
-                return String.Format("{0} of {1}", CardRank, CardSuit);
+                return true;
             }
         }
+    }
 
+    public override string ToString()
+    {
+        if (CardRank == Rank.joker)
+        {
+            return "Joker";
+        }
+        else
+        {
+            return string.Format("{0} of {1}", CardRank, CardSuit);
+        }
+    }
 
+    bool IEquatable<Card>.Equals(Card? other)
+    {
+        if (other == null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        if (CardRank != other.CardRank) return false;
+        if (CardSuit != other.CardSuit) return false;
+        if (CardSuit != other.CardSuit) return false;
+
+        return true;
+    }
+
+    private string GenerateSVG()
+    {
+        string cardSVG;
+
+        XmlDocument xmlDoc = new XmlDocument();
+        XmlDeclaration declaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", "yes");
+
+        XmlElement root = xmlDoc.DocumentElement;
+        xmlDoc.InsertBefore(declaration, root);
+
+        XmlElement svgElement = xmlDoc.CreateElement("svg");
+
+        svgElement.SetAttribute("xmlns", "http://www.w3.org/2000/svg");
+        svgElement.SetAttribute("version", "1.1");
+
+        XmlElement descElement = xmlDoc.CreateElement("desc");
+        descElement.InnerText = ToString();
+
+        xmlDoc.AppendChild(svgElement);
+
+        cardSVG = xmlDoc.OuterXml;
+
+        return cardSVG;
     }
 }

@@ -1,11 +1,8 @@
 ﻿namespace CardsLibrary;
 
-public partial class Card
+public enum Color
 {
-    public enum Color
-    {
-        red,
-        black,
-        blue
-    }
+    red,
+    black,
+    blue
 }

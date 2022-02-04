@@ -3,7 +3,7 @@ using System.Xml;
 
 namespace CardsLibrary;
 
-public partial class Card : IEquatable<Card>
+public class Card : IEquatable<Card>
 {
     private string cardSVG;
     public Card(Suit? Suit, Rank Rank)
@@ -19,6 +19,9 @@ public partial class Card : IEquatable<Card>
     /// </summary>
     public Suit? CardSuit { get; }
 
+    /// <summary>
+    /// String of the card's graphical representation in SVG format
+    /// </summary>
     public string SVG
     {
         get => cardSVG;
@@ -67,6 +70,14 @@ public partial class Card : IEquatable<Card>
     {
         string cardSVG;
 
+        string svgHeight = "";
+        string svgWidth = "";
+        string cardWidth = "";
+        string cardHeight = "";
+        string cardCornerLength = "";
+        string cardPadding = "";
+
+
         XmlDocument xmlDoc = new XmlDocument();
         XmlDeclaration declaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", "yes");
 
@@ -77,11 +88,29 @@ public partial class Card : IEquatable<Card>
 
         svgElement.SetAttribute("xmlns", "http://www.w3.org/2000/svg");
         svgElement.SetAttribute("version", "1.1");
+        svgElement.SetAttribute("height", svgHeight);
+        svgElement.SetAttribute("width", svgWidth);
 
         XmlElement descElement = xmlDoc.CreateElement("desc");
         descElement.InnerText = ToString();
 
+
+        XmlElement cardBackgroundElement = xmlDoc.CreateElement("rect");
+        cardBackgroundElement.SetAttribute("width", cardHeight);
+        cardBackgroundElement.SetAttribute("height", cardWidth);
+        cardBackgroundElement.SetAttribute("rx", cardCornerLength);
+        cardBackgroundElement.SetAttribute("ry", cardCornerLength);
+        
+
+
+
+        svgElement.AppendChild(cardBackgroundElement);
+
+
+
         xmlDoc.AppendChild(svgElement);
+
+
 
         cardSVG = xmlDoc.OuterXml;
 

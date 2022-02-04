@@ -1,45 +1,34 @@
-﻿namespace CardsLibrary;
+﻿using System.Runtime.InteropServices;
 
-public partial class Deck
+namespace CardsLibrary;
+
+public class Deck
 {
     private static Random rnd = new();
     private List<Card> cards;
 
     public IList<Card> Cards { get => cards; }
 
-    public Deck(Format DeckFormat = Format.French52, int Jokers = 0)
+    public Deck([Optional]IDeckFormat DeckFormat)
     {
-        cards = new List<Card>();
-        List<Card.Suit> DeckSuits = new();
-        List<Card.Rank> DeckRanks = new();
-
-        int jokerCount = 0;
-
-        switch (DeckFormat)
+        if (DeckFormat == null)
         {
-            case Format.French52:
-                DeckSuits = new List<Card.Suit> { Card.Suit.clubs, Card.Suit.hearts, Card.Suit.spades, Card.Suit.diamonds };
-                DeckRanks = new List<Card.Rank> { Card.Rank.ace, Card.Rank.two, Card.Rank.three, Card.Rank.four, Card.Rank.five, Card.Rank.six, Card.Rank.seven, Card.Rank.eight, Card.Rank.nine, Card.Rank.ten, Card.Rank.jack, Card.Rank.queen, Card.Rank.king };
-                break;
-
+            DeckFormat = new French52();
         }
+        cards = new List<Card>();
 
-
-        foreach (Card.Suit s in DeckSuits)
+        foreach (Suit s in DeckFormat.Suits)
         {
-            foreach (Card.Rank r in DeckRanks)
+            foreach (Rank r in DeckFormat.Ranks)
             {
                 Cards.Add(new Card(s, r));
             }
         }
 
-        for (int i = 0; i < jokerCount; i++)
+        for (int i = 0; i < DeckFormat.JokerCount; i++)
         {
-            Cards.Add(new Card(null, Card.Rank.joker));
+            Cards.Add(new Card(null, Rank.joker));
         }
-
-
-        for (int i = 0; i < Jokers; i++) cards.Add(new Card(null, Card.Rank.joker));
     }
 
     /// <summary>

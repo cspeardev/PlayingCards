@@ -28,8 +28,10 @@ public class CardTests
     public void SVGTest()
     {
         Deck deck = new();
-        string svg = deck.Cards[0].SVG;
 
-        Assert.IsNotNull(svg);
+        foreach(Card card in deck.Cards)
+        {
+            Assert.IsFalse(string.IsNullOrEmpty(card.SVG));
+        }
     }
 }

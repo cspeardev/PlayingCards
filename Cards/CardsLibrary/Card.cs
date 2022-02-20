@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 
 namespace CardsLibrary;
 
@@ -30,6 +29,7 @@ public class Card : IEquatable<Card>
 
     public bool IsFaceCard
     {
+        //TODO: Figure out how to better handle these, Aces are not face cards nor number cards
         get
         {
             if (CardRank.GetType() == typeof(int) || CardRank == Rank.joker)
@@ -70,12 +70,14 @@ public class Card : IEquatable<Card>
     {
         string cardSVG;
 
-        string svgHeight = "";
-        string svgWidth = "";
-        string cardWidth = "";
-        string cardHeight = "";
-        string cardCornerLength = "";
+        string svgHeight = "400px";
+        string svgWidth = "150px";
+        string cardWidth = "400px";
+        string cardHeight = "150px";
+        string cardCornerLength = "10px";
         string cardPadding = "";
+        string cardBackgroundColor = "white";
+        string cardStrokeColor = "";
 
 
         XmlDocument xmlDoc = new XmlDocument();
@@ -100,6 +102,9 @@ public class Card : IEquatable<Card>
         cardBackgroundElement.SetAttribute("height", cardWidth);
         cardBackgroundElement.SetAttribute("rx", cardCornerLength);
         cardBackgroundElement.SetAttribute("ry", cardCornerLength);
+        cardBackgroundElement.SetAttribute("fill",cardBackgroundColor);
+        cardBackgroundElement.SetAttribute("stroke",cardStrokeColor);
+
         
 
 

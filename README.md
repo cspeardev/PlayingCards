@@ -1,2 +1,2 @@
 # PlayingCards
-UWP library for playing cards
+Library for playing cards

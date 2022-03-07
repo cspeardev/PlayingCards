@@ -5,6 +5,7 @@ namespace CardsLibrary;
 public class Card : IEquatable<Card>
 {
     private string cardSVG;
+    private string SvgMeasurementUnit = "in";
     public Card(Suit? Suit, Rank Rank)
     {
         CardSuit = Suit;
@@ -70,14 +71,19 @@ public class Card : IEquatable<Card>
     {
         string cardSVG;
 
-        string svgHeight = "400px";
-        string svgWidth = "150px";
-        string cardWidth = "400px";
-        string cardHeight = "150px";
-        string cardCornerLength = "10px";
-        string cardPadding = "";
+        double externalPadding = 0.2;
+
+        double svgHeight = 3.5 + externalPadding*2;
+        double svgWidth = 2.25 + externalPadding*2;
+        double cardWidth = 2.25;
+        double cardHeight = 3.5;
+        double cardCornerLength = 0.11;
         string cardBackgroundColor = "white";
-        string cardStrokeColor = "";
+        string cardStrokeColor = "black";
+        double cardStrokeWidth = 0.015;
+        double rankX = (cardWidth + externalPadding) * 0.1;
+        double rankY = (cardHeight + externalPadding) * 0.1;
+
 
 
         XmlDocument xmlDoc = new XmlDocument();
@@ -90,26 +96,53 @@ public class Card : IEquatable<Card>
 
         svgElement.SetAttribute("xmlns", "http://www.w3.org/2000/svg");
         svgElement.SetAttribute("version", "1.1");
-        svgElement.SetAttribute("height", svgHeight);
-        svgElement.SetAttribute("width", svgWidth);
+        svgElement.SetAttribute("height", $"{svgHeight}{SvgMeasurementUnit}");
+        svgElement.SetAttribute("width", $"{svgWidth}{SvgMeasurementUnit}");
 
         XmlElement descElement = xmlDoc.CreateElement("desc");
         descElement.InnerText = ToString();
 
 
         XmlElement cardBackgroundElement = xmlDoc.CreateElement("rect");
-        cardBackgroundElement.SetAttribute("width", cardHeight);
-        cardBackgroundElement.SetAttribute("height", cardWidth);
-        cardBackgroundElement.SetAttribute("rx", cardCornerLength);
-        cardBackgroundElement.SetAttribute("ry", cardCornerLength);
-        cardBackgroundElement.SetAttribute("fill",cardBackgroundColor);
-        cardBackgroundElement.SetAttribute("stroke",cardStrokeColor);
+        cardBackgroundElement.SetAttribute("x", $"{externalPadding}{SvgMeasurementUnit}");
+        cardBackgroundElement.SetAttribute("y", $"{externalPadding}{SvgMeasurementUnit}");
+        cardBackgroundElement.SetAttribute("width", $"{cardWidth}{SvgMeasurementUnit}");
+        cardBackgroundElement.SetAttribute("height", $"{cardHeight}{SvgMeasurementUnit}");
+        cardBackgroundElement.SetAttribute("rx", $"{cardCornerLength}{SvgMeasurementUnit}");
+        cardBackgroundElement.SetAttribute("ry", $"{cardCornerLength}{SvgMeasurementUnit}");
+        cardBackgroundElement.SetAttribute("fill", cardBackgroundColor);
+        cardBackgroundElement.SetAttribute("stroke", cardStrokeColor);
+        cardBackgroundElement.SetAttribute("stroke-width", $"{cardStrokeWidth}{SvgMeasurementUnit}");
 
-        
+
+        XmlElement topRankElement = xmlDoc.CreateElement("text");
+
+        string RankDisplayString = "";
+        RankDisplayString = BuildRankString();
+
+        topRankElement.InnerText = RankDisplayString;
+        topRankElement.SetAttribute("font-size", "16");
+        topRankElement.SetAttribute("font-family", "Arial");
+        topRankElement.SetAttribute("fill", "black");
+        XmlElement bottomRankElement = (XmlElement)topRankElement.Clone();
+
+
+
+        bottomRankElement.InnerText = RankDisplayString;
+        bottomRankElement.SetAttribute("transform", "scale(1, -1)");
+
+        topRankElement.SetAttribute("x", $"{rankX}{SvgMeasurementUnit}");
+        topRankElement.SetAttribute("y", $"{rankY}{SvgMeasurementUnit}");
+
+        bottomRankElement.SetAttribute("x", $"{svgWidth - rankX}{SvgMeasurementUnit}");
+        bottomRankElement.SetAttribute("y", $"{-(svgHeight - rankY)}{SvgMeasurementUnit}");
 
 
 
         svgElement.AppendChild(cardBackgroundElement);
+
+        svgElement.AppendChild(topRankElement);
+        svgElement.AppendChild(bottomRankElement);
 
 
 
@@ -120,5 +153,30 @@ public class Card : IEquatable<Card>
         cardSVG = xmlDoc.OuterXml;
 
         return cardSVG;
+    }
+
+    private string BuildRankString()
+    {
+        string RankDisplayString;
+        int RankValue = (int)CardRank;
+        if (char.IsLetter(Convert.ToChar(char.ConvertFromUtf32(RankValue))))
+        {
+            RankDisplayString = char.ConvertFromUtf32(RankValue);
+        }
+        else
+        {
+            RankDisplayString = RankValue.ToString();
+        }
+        return RankDisplayString;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return ((IEquatable<Card>)this).Equals(obj as Card);
+    }
+
+    public override int GetHashCode()
+    {
+        throw new NotImplementedException();
     }
 }

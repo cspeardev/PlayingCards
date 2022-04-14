@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Text;
+using System.Xml;
 
 namespace CardsLibrary;
 
@@ -83,12 +84,15 @@ public class Card : IEquatable<Card>, ICloneable
         decimal cardStrokeWidth = 0.015m;
         decimal rankX = (externalPadding + 0.1m);
         decimal rankY = (externalPadding + 0.1m);
+        decimal rankSpacing = 0.1m;
+        decimal rankSize = 0.3m;
 
 
 
-        XmlDocument xmlDoc = new XmlDocument();
+
+
+        XmlDocument xmlDoc = new();
         XmlDeclaration declaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", "yes");
-
         XmlElement root = xmlDoc.DocumentElement;
         xmlDoc.InsertBefore(declaration, root);
 
@@ -121,7 +125,7 @@ public class Card : IEquatable<Card>, ICloneable
         RankDisplayString = BuildRankString();
 
         topRankElement.InnerText = RankDisplayString;
-        topRankElement.SetAttribute("font-size", $"0.3{SvgMeasurementUnit}");
+        topRankElement.SetAttribute("font-size", $"{rankSize}{SvgMeasurementUnit}");
         topRankElement.SetAttribute("font-family", "Arial");
         topRankElement.SetAttribute("fill", "black");
         topRankElement.SetAttribute("dominant-baseline", "hanging");
@@ -129,18 +133,31 @@ public class Card : IEquatable<Card>, ICloneable
         topRankElement.SetAttribute("y", $"{rankY}{SvgMeasurementUnit}");
         XmlElement bottomRankElement = (XmlElement)topRankElement.Clone();
 
-
-
         bottomRankElement.InnerText = RankDisplayString;
         bottomRankElement.SetAttribute("transform", "scale (-1, -1)");
         bottomRankElement.SetAttribute("transform-origin", "center");
 
+        ///TODO: Figure out what kind of element the suit element should be
+        XmlElement topSuitElement = xmlDoc.CreateElement("text");
+        topSuitElement.InnerText = CardSuit.HasValue ? char.ConvertFromUtf32((int)CardSuit) : "";
+
+        //topRankElement.InnerText = CardSuit.HasValue ? Encoding.UTF8.GetString : "";
+        topSuitElement.SetAttribute("font-size", $"0.3{SvgMeasurementUnit}");
+        topSuitElement.SetAttribute("font-family", "Arial");
+        topSuitElement.SetAttribute("fill", "black");
+        topSuitElement.SetAttribute("dominant-baseline", "hanging");
+        topSuitElement.SetAttribute("x", $"{rankX}{SvgMeasurementUnit}");
+        topSuitElement.SetAttribute("y", $"{rankY+rankSpacing+rankSize}{SvgMeasurementUnit}");
+        XmlElement bottomSuitElement = (XmlElement)topSuitElement.Clone();
+        bottomSuitElement.SetAttribute("transform", "scale (-1, -1)");
+        bottomSuitElement.SetAttribute("transform-origin", "center");
 
         svgElement.AppendChild(cardBackgroundElement);
 
         svgElement.AppendChild(topRankElement);
+        svgElement.AppendChild(topSuitElement);
         svgElement.AppendChild(bottomRankElement);
-
+        svgElement.AppendChild(bottomSuitElement);
 
 
         xmlDoc.AppendChild(svgElement);

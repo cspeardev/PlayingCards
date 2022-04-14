@@ -2,7 +2,7 @@
 
 namespace CardsLibrary;
 
-public class Card : IEquatable<Card>
+public class Card : IEquatable<Card>, ICloneable
 {
     private string cardSVG;
     private string SvgMeasurementUnit = "in";
@@ -71,18 +71,18 @@ public class Card : IEquatable<Card>
     {
         string cardSVG;
 
-        double externalPadding = 0.2;
+        decimal externalPadding = 0.2m;
 
-        double svgHeight = 3.5 + externalPadding*2;
-        double svgWidth = 2.25 + externalPadding*2;
-        double cardWidth = 2.25;
-        double cardHeight = 3.5;
-        double cardCornerLength = 0.11;
+        decimal svgHeight = 3.5m + (externalPadding*2);
+        decimal svgWidth = 2.25m + externalPadding*2;
+        decimal cardWidth = 2.25m;
+        decimal cardHeight = 3.5m;
+        decimal cardCornerLength = 0.11m;
         string cardBackgroundColor = "white";
         string cardStrokeColor = "black";
-        double cardStrokeWidth = 0.015;
-        double rankX = (cardWidth + externalPadding) * 0.1;
-        double rankY = (cardHeight + externalPadding) * 0.1;
+        decimal cardStrokeWidth = 0.015m;
+        decimal rankX = (externalPadding + 0.1m);
+        decimal rankY = (externalPadding + 0.1m);
 
 
 
@@ -121,22 +121,19 @@ public class Card : IEquatable<Card>
         RankDisplayString = BuildRankString();
 
         topRankElement.InnerText = RankDisplayString;
-        topRankElement.SetAttribute("font-size", "16");
+        topRankElement.SetAttribute("font-size", $"0.3{SvgMeasurementUnit}");
         topRankElement.SetAttribute("font-family", "Arial");
         topRankElement.SetAttribute("fill", "black");
+        topRankElement.SetAttribute("dominant-baseline", "hanging");
+        topRankElement.SetAttribute("x", $"{rankX}{SvgMeasurementUnit}");
+        topRankElement.SetAttribute("y", $"{rankY}{SvgMeasurementUnit}");
         XmlElement bottomRankElement = (XmlElement)topRankElement.Clone();
 
 
 
         bottomRankElement.InnerText = RankDisplayString;
-        bottomRankElement.SetAttribute("transform", "scale(1, -1)");
-
-        topRankElement.SetAttribute("x", $"{rankX}{SvgMeasurementUnit}");
-        topRankElement.SetAttribute("y", $"{rankY}{SvgMeasurementUnit}");
-
-        bottomRankElement.SetAttribute("x", $"{svgWidth - rankX}{SvgMeasurementUnit}");
-        bottomRankElement.SetAttribute("y", $"{-(svgHeight - rankY)}{SvgMeasurementUnit}");
-
+        bottomRankElement.SetAttribute("transform", "scale (-1, -1)");
+        bottomRankElement.SetAttribute("transform-origin", "center");
 
 
         svgElement.AppendChild(cardBackgroundElement);
@@ -159,9 +156,10 @@ public class Card : IEquatable<Card>
     {
         string RankDisplayString;
         int RankValue = (int)CardRank;
-        if (char.IsLetter(Convert.ToChar(char.ConvertFromUtf32(RankValue))))
+        string charFromRank = char.ConvertFromUtf32(RankValue);
+        if (char.IsLetter(Convert.ToChar(charFromRank)))
         {
-            RankDisplayString = char.ConvertFromUtf32(RankValue);
+            RankDisplayString = charFromRank;
         }
         else
         {
@@ -176,6 +174,11 @@ public class Card : IEquatable<Card>
     }
 
     public override int GetHashCode()
+    {
+        throw new NotImplementedException();
+    }
+
+    public object Clone()
     {
         throw new NotImplementedException();
     }

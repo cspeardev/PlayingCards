@@ -2,7 +2,6 @@
 
 public enum Suit
 {
-    //French Suited
     hearts = 9829,
     spades = 9824,
     diamonds = 9830,
